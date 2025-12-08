@@ -126,14 +126,7 @@ public class BalanceByAddressReducer(IDbContextFactory<MyDbContext> dbContextFac
         {
             if (existingBalances.TryGetValue(address, out BalanceByAddress? existing))
             {
-                // Create a new record with updated balance
-                var updated = existing with { Balance = existing.Balance + change };
-
-                // Update in dictionary (important if you reuse it)
-                existingBalances[address] = updated;
-
-                // If you also want to update the DB, you can attach it
-                db.BalanceByAddress.Update(updated);
+                existing.Balance += change;
             }
             else
             {
@@ -200,14 +193,7 @@ public class BalanceByAddressReducer(IDbContextFactory<MyDbContext> dbContextFac
         {
             if (existingBalances.TryGetValue(address, out BalanceByAddress? existing))
             {
-                // Create a new record with updated balance
-                var updated = existing with { Balance = existing.Balance + adjustment };
-
-                // Update in dictionary (important if you reuse it)
-                existingBalances[address] = updated;
-
-                // If you also want to update the DB, you can attach it
-                db.BalanceByAddress.Update(updated);
+                existing.Balance += adjustment;
             }
             else
             {
