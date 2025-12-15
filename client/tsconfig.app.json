@@ -25,10 +25,18 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
+<<<<<<< Updated upstream
 		/* Path mapping */
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]
+=======
+		"baseUrl": ".",
+		"paths": {
+			"@/*": [
+				"./src/*"
+			]
+>>>>>>> Stashed changes
 		}
 	},
 	"include": ["src"]
