@@ -10,7 +10,9 @@ public class MyDbContext(DbContextOptions options, IConfiguration configuration)
 
     public DbSet<UtxoByAddress> UtxoByAddress => Set<UtxoByAddress>();
 
-    public DbSet<NftInfo> NftInfo => Set<NftInfo>();
+    public DbSet<BlockSummary> BlockSummary => Set<BlockSummary>();
+
+    // public DbSet<NftInfo> NftInfo => Set<NftInfo>();
 
     // public DbSet<NftMetadata> NftMetadata => Set<NftMetadata>();
 
@@ -30,12 +32,20 @@ public class MyDbContext(DbContextOptions options, IConfiguration configuration)
             e.HasIndex(u => u.Address);
         });
 
-        // NFT Info
-        modelBuilder.Entity<NftInfo>(e =>
+        modelBuilder.Entity<BlockSummary>(e =>
         {
-            e.HasKey(n => new { n.PolicyId, n.AssetName });
-            e.HasIndex(n => n.PolicyId);
+            e.HasKey(b => b.BlockHash);
+            e.HasIndex(b => b.Slot);
+            e.HasIndex(b => b.Epoch);
+            e.HasIndex(b => b.Height);
         });
+
+        // // NFT Info
+        // modelBuilder.Entity<NftInfo>(e =>
+        // {
+        //     e.HasKey(n => new { n.PolicyId, n.AssetName });
+        //     e.HasIndex(n => n.PolicyId);
+        // });
 
         // // NFT Metadata
         // modelBuilder.Entity<NftMetadata>(e =>

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YasN1ZsU4AE=",
+  "dgSpecHash": "cpI6mWdWTEs=",
   "success": true,
   "projectFilePath": "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/TempleOfNeah.Sync.csproj",
   "expectedPackageFiles": [
@@ -16,7 +16,7 @@
     "/home/zeus/.nuget/packages/libsodium/1.0.19/libsodium.1.0.19.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.aspnetcore.cryptography.internal/9.0.3/microsoft.aspnetcore.cryptography.internal.9.0.3.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/9.0.3/microsoft.aspnetcore.cryptography.keyderivation.9.0.3.nupkg.sha512",
-    "/home/zeus/.nuget/packages/microsoft.aspnetcore.openapi/9.0.11/microsoft.aspnetcore.openapi.9.0.11.nupkg.sha512",
+    "/home/zeus/.nuget/packages/microsoft.aspnetcore.openapi/7.0.0/microsoft.aspnetcore.openapi.7.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.bcl.asyncinterfaces/7.0.0/microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.build.framework/17.8.3/microsoft.build.framework.17.8.3.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.build.locator/1.7.8/microsoft.build.locator.1.7.8.nupkg.sha512",
@@ -31,6 +31,7 @@
     "/home/zeus/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.6/microsoft.entityframeworkcore.analyzers.9.0.6.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.entityframeworkcore.design/9.0.6/microsoft.entityframeworkcore.design.9.0.6.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.entityframeworkcore.relational/9.0.6/microsoft.entityframeworkcore.relational.9.0.6.nupkg.sha512",
+    "/home/zeus/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.6/microsoft.extensions.caching.abstractions.9.0.6.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.extensions.caching.memory/9.0.6/microsoft.extensions.caching.memory.9.0.6.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.extensions.configuration/9.0.0/microsoft.extensions.configuration.9.0.0.nupkg.sha512",
@@ -61,7 +62,7 @@
     "/home/zeus/.nuget/packages/microsoft.extensions.options/9.0.6/microsoft.extensions.options.9.0.6.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.extensions.options.configurationextensions/9.0.0/microsoft.extensions.options.configurationextensions.9.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/microsoft.extensions.primitives/9.0.6/microsoft.extensions.primitives.9.0.6.nupkg.sha512",
-    "/home/zeus/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512",
+    "/home/zeus/.nuget/packages/microsoft.openapi/1.6.14/microsoft.openapi.1.6.14.nupkg.sha512",
     "/home/zeus/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/npgsql/9.0.3/npgsql.9.0.3.nupkg.sha512",
     "/home/zeus/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.4/npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
@@ -69,6 +70,10 @@
     "/home/zeus/.nuget/packages/pallas.net/0.4.0/pallas.net.0.4.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/saucecontrol.blake2fast/2.0.0/saucecontrol.blake2fast.2.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/spectre.console/0.49.1/spectre.console.0.49.1.nupkg.sha512",
+    "/home/zeus/.nuget/packages/swashbuckle.aspnetcore/6.7.0/swashbuckle.aspnetcore.6.7.0.nupkg.sha512",
+    "/home/zeus/.nuget/packages/swashbuckle.aspnetcore.swagger/6.7.0/swashbuckle.aspnetcore.swagger.6.7.0.nupkg.sha512",
+    "/home/zeus/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.7.0/swashbuckle.aspnetcore.swaggergen.6.7.0.nupkg.sha512",
+    "/home/zeus/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.7.0/swashbuckle.aspnetcore.swaggerui.6.7.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/system.codedom/6.0.0/system.codedom.6.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/system.collections.immutable/7.0.0/system.collections.immutable.7.0.0.nupkg.sha512",
     "/home/zeus/.nuget/packages/system.composition/7.0.0/system.composition.7.0.0.nupkg.sha512",
@@ -87,5 +92,16 @@
     "/home/zeus/.nuget/packages/utxorpc.sdk/1.1.0-alpha/utxorpc.sdk.1.1.0-alpha.nupkg.sha512",
     "/home/zeus/.nuget/packages/utxorpc.spec/0.10.0-alpha/utxorpc.spec.0.10.0-alpha.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "TempleOfNeah.Sync depends on Microsoft.AspNetCore.OpenApi (>= 3.0.1) but Microsoft.AspNetCore.OpenApi 3.0.1 was not found. Microsoft.AspNetCore.OpenApi 7.0.0 was resolved instead.",
+      "libraryId": "Microsoft.AspNetCore.OpenApi",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TempleOfNeah.Sync.Data.Context;
@@ -11,9 +12,11 @@ using TempleOfNeah.Sync.Data.Context;
 namespace TempleOfNeah.Sync.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251215140517_UpdateNftInfoModel")]
+    partial class UpdateNftInfoModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,62 +60,53 @@ namespace TempleOfNeah.Sync.Migrations
                     b.ToTable("BalanceByAddress", "cardanoindexer");
                 });
 
-            modelBuilder.Entity("TempleOfNeah.Sync.Data.Models.BlockSummary", b =>
+            modelBuilder.Entity("TempleOfNeah.Sync.Data.Models.NftInfo", b =>
                 {
-                    b.Property<string>("BlockHash")
+                    b.Property<string>("PolicyId")
                         .HasColumnType("text");
 
-                    b.Property<int>("BurnCount")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Epoch")
-                        .HasColumnType("numeric(20,0)");
-
-                    b.Property<decimal>("Height")
-                        .HasColumnType("numeric(20,0)");
-
-                    b.Property<int>("InputCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MintCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OutputCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("PreviousBlockHash")
+                    b.Property<string>("AssetName")
                         .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MediaType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MintAddress")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<long>("Quantity")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Slot")
                         .HasColumnType("numeric(20,0)");
 
-                    b.Property<DateTimeOffset?>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("TxHash")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<decimal>("TotalAdaMoved")
-                        .HasColumnType("numeric(20,0)");
+                    b.HasKey("PolicyId", "AssetName");
 
-                    b.Property<decimal>("TotalFees")
-                        .HasColumnType("numeric(20,0)");
+                    b.HasIndex("MintAddress");
 
-                    b.Property<decimal>("TotalLovelaceMoved")
-                        .HasColumnType("numeric(20,0)");
-
-                    b.Property<int>("TxCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UniqueAddressCount")
-                        .HasColumnType("integer");
-
-                    b.HasKey("BlockHash");
-
-                    b.HasIndex("Epoch");
-
-                    b.HasIndex("Height");
+                    b.HasIndex("PolicyId");
 
                     b.HasIndex("Slot");
 
-                    b.ToTable("BlockSummary", "cardanoindexer");
+                    b.HasIndex("TxHash");
+
+                    b.ToTable("NftInfo", "cardanoindexer");
                 });
 
             modelBuilder.Entity("TempleOfNeah.Sync.Data.Models.UtxoByAddress", b =>

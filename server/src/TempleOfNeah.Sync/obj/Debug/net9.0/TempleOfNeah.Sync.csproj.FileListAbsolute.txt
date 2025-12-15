@@ -163,6 +163,9 @@ C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah
 C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/obj/Debug/net9.0/TempleOfNeah.Sync.pdb
 C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/obj/Debug/net9.0/TempleOfNeah.Sync.genruntimeconfig.cache
 C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/obj/Debug/net9.0/ref/TempleOfNeah.Sync.dll
+C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/appsettings.Development.json
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/appsettings.json
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/TempleOfNeah.Sync.staticwebassets.endpoints.json
@@ -218,6 +221,9 @@ C:/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Pallas.NET.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/SauceControl.Blake2Fast.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Spectre.Console.dll
+/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
+/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/System.CodeDom.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/System.Composition.AttributedModel.dll
 /mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/bin/Debug/net9.0/System.Composition.Convention.dll
