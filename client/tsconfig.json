@@ -4,8 +4,14 @@
 	"references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
 	"compilerOptions": {
 		"baseUrl": ".",
+<<<<<<< Updated upstream
 		"paths": {
 			"@/*": ["./src/*"]
 		}
+=======
+			"paths": {
+				"@/*": ["./src/*"]
+			}
+>>>>>>> Stashed changes
 	}
 }
