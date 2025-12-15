@@ -10,14 +10,55 @@ public class MyDbContext(DbContextOptions options, IConfiguration configuration)
 
     public DbSet<UtxoByAddress> UtxoByAddress => Set<UtxoByAddress>();
 
+    public DbSet<BlockSummary> BlockSummary => Set<BlockSummary>();
+
+    // public DbSet<NftInfo> NftInfo => Set<NftInfo>();
+
+    // public DbSet<NftMetadata> NftMetadata => Set<NftMetadata>();
+
+    // public DbSet<OwnershipHistory> OwnershipHistory => Set<OwnershipHistory>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Balance By Address
         modelBuilder.Entity<BalanceByAddress>(e => e.HasKey(b => b.Address));
+
+        // UTXO By Address
         modelBuilder.Entity<UtxoByAddress>(e => 
         {
             e.HasKey(u => new { u.TxHash, u.OutputIndex });
             e.HasIndex(u => u.Address);
         });
+
+        modelBuilder.Entity<BlockSummary>(e =>
+        {
+            e.HasKey(b => b.BlockHash);
+            e.HasIndex(b => b.Slot);
+            e.HasIndex(b => b.Epoch);
+            e.HasIndex(b => b.Height);
+        });
+
+        // // NFT Info
+        // modelBuilder.Entity<NftInfo>(e =>
+        // {
+        //     e.HasKey(n => new { n.PolicyId, n.AssetName });
+        //     e.HasIndex(n => n.PolicyId);
+        // });
+
+        // // NFT Metadata
+        // modelBuilder.Entity<NftMetadata>(e =>
+        // {
+        //     e.HasKey(n => new { n.PolicyId, n.AssetName });
+        //     e.HasIndex(n => n.Name);
+        // });
+        
+        // // Ownership History
+        // modelBuilder.Entity<OwnershipHistory>(e =>
+        // {
+        //     e.HasKey(o => new { o.AssetId, o.Timestamp });
+        //     e.HasIndex(o => o.Address);
+        // });
     }
 }

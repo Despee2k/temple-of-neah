@@ -7,5 +7,5 @@ public record BalanceByAddress(
     long Balance
 ) : IReducerModel
 {
-    public long Balance { get; init; } = Balance;
+    public long Balance { get; set; } = Balance;
 }
