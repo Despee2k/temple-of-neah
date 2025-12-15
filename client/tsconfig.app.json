@@ -25,19 +25,12 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
-<<<<<<< Updated upstream
 		/* Path mapping */
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]
-=======
-		"baseUrl": ".",
-		"paths": {
-			"@/*": [
-				"./src/*"
-			]
->>>>>>> Stashed changes
-		}
+		},
+		"ignoreDeprecations": "6.0"
 	},
 	"include": ["src"]
 }
