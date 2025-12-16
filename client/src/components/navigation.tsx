@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Blocks } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function Navigation() {
@@ -8,8 +7,8 @@ export function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Blocks className="h-5 w-5 text-primary-foreground" />
+            <div className="flex items-center justify-center rounded-lg">
+              <img src="/images/cardano.png" alt="Cardano Logo" className="h-8 w-8" />
             </div>
             <span className="text-xl font-semibold text-foreground">Learn Cardano</span>
           </Link>
@@ -28,12 +27,12 @@ export function Navigation() {
               Block Explorer
             </Link>
             <Link
-              to="/"
+              to="/about"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </Link>
-            <Link to="/modules">
+            <Link to="/get-started">
               <Button size="sm">Get Started</Button>
             </Link>
           </div>

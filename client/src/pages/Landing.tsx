@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Navigation } from "@/components/navigation"
 import { BlockChainVisualization } from "@/components/block-chain-visualization"
-import { Blocks, ArrowRightLeft, Sparkles, BookOpen, Eye, Zap } from "lucide-react"
+import { Blocks, ArrowRightLeft, Sparkles, BookOpen, Zap, Coins, Calendar, Wallet, Package } from "lucide-react"
 import { Link } from "react-router-dom"
 
 function Landing() {
@@ -65,7 +65,7 @@ function Landing() {
           </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           <Link to="/modules/blocks">
             <Card className="relative h-full cursor-pointer overflow-hidden border-border bg-card transition-all hover:border-primary hover:shadow-lg">
               <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-primary/10" />
@@ -91,6 +91,37 @@ function Landing() {
                   <li className="flex items-start gap-2">
                     <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
                     <span>Hash connections explained</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/modules/wallets">
+            <Card className="relative h-full cursor-pointer overflow-hidden border-border bg-card transition-all hover:border-primary hover:shadow-lg">
+              <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-primary/10" />
+              <CardHeader>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <Wallet className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-foreground">Wallets & Addresses</CardTitle>
+                <CardDescription>
+                  Learn how to safely store and manage your ADA with different wallet types
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Wallet types and security</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Address structure explained</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Essential security practices</span>
                   </li>
                 </ul>
               </CardContent>
@@ -128,31 +159,93 @@ function Landing() {
             </Card>
           </Link>
 
-          <Link to="/explorer">
+          <Link to="/modules/utxos">
             <Card className="relative h-full cursor-pointer overflow-hidden border-border bg-card transition-all hover:border-primary hover:shadow-lg">
               <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-primary/10" />
               <CardHeader>
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Eye className="h-6 w-6 text-primary" />
+                  <Package className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-foreground">Live Block Explorer</CardTitle>
+                <CardTitle className="text-foreground">Understanding UTXOs</CardTitle>
                 <CardDescription>
-                  Explore real-time Cardano blockchain data with interactive tooltips and guides
+                  Master Cardano's unique transaction model and how change works
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>Live blockchain data via Argus</span>
+                    <span>UTXO model explained</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>Interactive tooltips everywhere</span>
+                    <span>Interactive transaction demo</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>Search and filter capabilities</span>
+                    <span>Change outputs explained</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/modules/staking">
+            <Card className="relative h-full cursor-pointer overflow-hidden border-border bg-card transition-all hover:border-primary hover:shadow-lg">
+              <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-primary/10" />
+              <CardHeader>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <Coins className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-foreground">Staking & Delegation</CardTitle>
+                <CardDescription>
+                  Learn how Cardano's Proof-of-Stake system works and earn rewards
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Stake pool selection</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Rewards calculation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span>Delegation explained</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/modules/epochs">
+            <Card className="relative h-full cursor-pointer overflow-hidden border-border bg-card transition-all hover:border-accent hover:shadow-lg">
+              <div className="absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-accent/10" />
+              <CardHeader>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
+                  <Calendar className="h-6 w-6 text-accent" />
+                </div>
+                <CardTitle className="text-foreground">Epochs & Slots</CardTitle>
+                <CardDescription>
+                  Understand Cardano's unique time system and when rewards are distributed
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                    <span>Slot and epoch structure</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                    <span>Reward distribution timing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-accent" />
+                    <span>Block creation schedule</span>
                   </li>
                 </ul>
               </CardContent>
