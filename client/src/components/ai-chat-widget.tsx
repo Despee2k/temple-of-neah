@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CHAT_CONFIG } from "../config/chatConfig";
+import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 
 type ChatRole = "user" | "assistant";
 
@@ -33,7 +34,6 @@ function truncateToWordLimit(text: string, maxWords: number): string {
   const words = text.trim().split(/\s+/);
   if (words.length <= maxWords) return text.trim();
 
-  // First, try to cut at sentence boundaries while respecting the word limit.
   const sentences = text
     .trim()
     .split(/(?<=[.!?])\s+/)
@@ -53,7 +53,6 @@ function truncateToWordLimit(text: string, maxWords: number): string {
     return keptSentences.join(" ");
   }
 
-  // If even the first sentence exceeds the limit, fall back to a hard cut.
   const limitedWords = words.slice(0, maxWords);
   return limitedWords.join(" ").trim();
 }
@@ -64,7 +63,7 @@ export const AiChatWidget: React.FC = () => {
     {
       role: "assistant",
       content:
-        "Hi! I’m your learning assistant. Ask me to explain any concept, and I’ll break it down step by step.",
+        "Hi! I'm your learning assistant. Ask me to explain any concept, and I'll break it down step by step.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -107,7 +106,6 @@ export const AiChatWidget: React.FC = () => {
           role: m.role,
           content: m.content,
         })),
-        // Pass the active limit to the backend as a hint (client still enforces).
         wordLimit: activeWordLimit,
       };
 
@@ -150,79 +148,89 @@ export const AiChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* Minimized bubble */}
+      {/* Minimized bubble - matches your app's design system */}
       {!isOpen && (
         <button
           type="button"
           aria-label="Open learning assistant"
           onClick={handleToggle}
-          className="fixed bottom-4 right-4 z-40 h-14 w-14 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center transition-transform hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+          className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full border border-border bg-card text-primary shadow-lg flex items-center justify-center transition-all hover:scale-110 hover:border-primary/50 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
-          <span className="text-2xl">💬</span>
+          <MessageCircle className="h-6 w-6" />
         </button>
       )}
 
-      {/* Expanded widget */}
+      {/* Expanded widget - redesigned to match your app */}
       <div
-        className={`fixed bottom-4 right-4 z-40 w-80 max-w-[95vw] transform transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] transform transition-all duration-300 ${
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="flex flex-col rounded-xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-900 text-white">
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm">Neah Learning Assistant</span>
-              <span className="text-[11px] text-slate-300">
-                Ask me to explain any concept, step by step.
-              </span>
+        <div className="flex flex-col rounded-lg border border-border bg-card shadow-2xl overflow-hidden">
+          {/* Header - matches your card headers */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-sm text-foreground">Learning Assistant</span>
+                <span className="text-[11px] text-muted-foreground">
+                  Step-by-step explanations
+                </span>
+              </div>
             </div>
             <button
               type="button"
               onClick={handleToggle}
-              className="ml-3 rounded-full p-1 hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              className="rounded-lg p-1.5 hover:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="Minimize learning assistant"
             >
-              <span className="text-lg leading-none">×</span>
+              <X className="h-4 w-4 text-muted-foreground" />
             </button>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 max-h-80 overflow-y-auto px-3 py-2 bg-slate-50 text-sm">
+          {/* Messages - updated styling */}
+          <div className="flex-1 max-h-96 overflow-y-auto px-4 py-3 bg-background space-y-3">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`mb-2 flex ${
+                className={`flex ${
                   message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
                 <div
-                  className={`rounded-lg px-3 py-2 max-w-[80%] whitespace-pre-wrap leading-snug ${
+                  className={`rounded-lg px-3 py-2 max-w-[85%] text-sm leading-relaxed ${
                     message.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-slate-900 border border-slate-200"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border bg-card text-foreground"
                   }`}
                 >
-                  {message.content}
+                  <p className="whitespace-pre-wrap">{message.content}</p>
                 </div>
               </div>
             ))}
             {isLoading && (
-              <div className="mb-2 flex justify-start">
-                <div className="rounded-lg px-3 py-2 max-w-[80%] bg-white text-slate-500 border border-slate-200 text-xs">
-                  Thinking...
+              <div className="flex justify-start">
+                <div className="rounded-lg px-3 py-2 border border-border bg-muted/50 text-muted-foreground text-xs flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <span className="animate-bounce" style={{ animationDelay: "0ms" }}>●</span>
+                    <span className="animate-bounce" style={{ animationDelay: "150ms" }}>●</span>
+                    <span className="animate-bounce" style={{ animationDelay: "300ms" }}>●</span>
+                  </div>
+                  <span>Thinking</span>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Footer / input */}
+          {/* Footer / input - matches your input styling */}
           <form
             onSubmit={handleSubmit}
-            className="border-t border-slate-200 bg-white px-3 py-2"
+            className="border-t border-border bg-card px-4 py-3"
           >
             <div className="flex items-end gap-2">
               <div className="flex-1">
@@ -230,23 +238,29 @@ export const AiChatWidget: React.FC = () => {
                   rows={2}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  className="w-full resize-none rounded-md border border-slate-300 px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Ask a question or say what you’re trying to learn..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                  placeholder="Ask a question or describe what you're learning..."
                 />
-                <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Learning-focused answers, word-limited for clarity.</span>
-                  <span>
-                    Limit: {activeWordLimit} words
+                <div className="mt-1.5 flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>Press Enter to send, Shift+Enter for new line</span>
+                  <span className="font-mono">
+                    {activeWordLimit}w limit
                   </span>
                 </div>
               </div>
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="mb-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+                className="mb-6 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 aria-label="Send message"
               >
-                ➤
+                <Send className="h-4 w-4" />
               </button>
             </div>
           </form>
@@ -257,5 +271,3 @@ export const AiChatWidget: React.FC = () => {
 };
 
 export default AiChatWidget;
-
-
