@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, RotateCcw, ArrowRight } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { getLatestBlockSummaries } from "@/api/blockSummary"
 
 interface TransactionData {
   sender: string
@@ -13,19 +14,14 @@ interface TransactionData {
   hash: string
 }
 
-const mockTransaction: TransactionData = {
-  sender: "addr1qx2fxv2um...9y5nc2p",
-  receiver: "addr1q8r2n5km...7h3dx8s",
-  amount: "1,250.50",
-  fee: "0.17",
-  hash: "f9a8b2c1d5e7f3a9b8c2d1e5a7b3c9d8e2f1a5b7c3d9e8f2a1b5c7d3e9f8a2b1",
-}
-
 type AnimationStep = 0 | 1 | 2 | 3 | 4 | 5
 
 export function TransactionFlow() {
   const [animationStep, setAnimationStep] = useState<AnimationStep>(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [transaction, setTransaction] = useState<TransactionData | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (isPlaying && animationStep < 5) {
@@ -38,6 +34,46 @@ export function TransactionFlow() {
       setIsPlaying(false)
     }
   }, [isPlaying, animationStep])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadExampleTransaction = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        const [latest] = await getLatestBlockSummaries(1)
+        if (!isMounted || !latest) return
+
+        setTransaction({
+          sender: "addr1qx2fxv2um...9y5nc2p",
+          receiver: "addr1q8r2n5km...7h3dx8s",
+          amount: latest.totalAdaMoved.toLocaleString(undefined, {
+            maximumFractionDigits: 6,
+          }),
+          fee: latest.totalFees.toLocaleString(undefined, {
+            maximumFractionDigits: 6,
+          }),
+          hash: latest.blockHash,
+        })
+      } catch (e) {
+        if (!isMounted) return
+        console.error("Failed to load example transaction data", e)
+        setError("Unable to load live transaction example right now.")
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadExampleTransaction()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handlePlay = () => {
     setAnimationStep(0)
@@ -78,6 +114,14 @@ export function TransactionFlow() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <Card className="border-destructive/40 bg-destructive/5">
+          <CardContent className="py-3 text-sm text-destructive">
+            {error} Showing placeholder transaction details until the API is available.
+          </CardContent>
+        </Card>
+      )}
+
       {/* Controls */}
       <Card className="border-border bg-card">
         <CardHeader>
@@ -123,7 +167,7 @@ export function TransactionFlow() {
               </div>
               <p className="mt-3 text-sm font-semibold text-foreground">Sender</p>
               <p className="mt-1 max-w-[150px] truncate font-mono text-xs text-muted-foreground">
-                {mockTransaction.sender}
+                {transaction ? transaction.sender : isLoading ? "Loading..." : "addr1…placeholder"}
               </p>
               {animationStep >= 1 && (
                 <Badge variant="outline" className="mt-2 animate-in fade-in border-primary text-primary">
@@ -151,7 +195,9 @@ export function TransactionFlow() {
                 )}
               />
               {animationStep >= 2 && (
-                <p className="animate-in fade-in text-xs font-medium text-primary">₳{mockTransaction.amount}</p>
+                <p className="animate-in fade-in text-xs font-medium text-primary">
+                  {transaction ? `₳${transaction.amount}` : isLoading ? "₳…" : "₳—"}
+                </p>
               )}
             </div>
 
@@ -178,7 +224,9 @@ export function TransactionFlow() {
                   <Badge variant="outline" className="border-accent text-accent">
                     In Mempool
                   </Badge>
-                  <p className="text-xs text-muted-foreground">Fee: ₳{mockTransaction.fee}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Fee: {transaction ? `₳${transaction.fee}` : isLoading ? "₳…" : "₳—"}
+                  </p>
                 </div>
               )}
             </div>
@@ -223,7 +271,7 @@ export function TransactionFlow() {
               </div>
               <p className="mt-3 text-sm font-semibold text-foreground">Receiver</p>
               <p className="mt-1 max-w-[150px] truncate font-mono text-xs text-muted-foreground">
-                {mockTransaction.receiver}
+                {transaction ? transaction.receiver : isLoading ? "Loading..." : "addr1…placeholder"}
               </p>
               {animationStep >= 5 && (
                 <Badge variant="outline" className="mt-2 animate-in fade-in border-primary text-primary">
@@ -264,20 +312,26 @@ export function TransactionFlow() {
               <div className="rounded-lg border border-border bg-background p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Amount Sent</span>
-                  <span className="font-mono text-sm font-semibold text-primary">₳{mockTransaction.amount}</span>
+                  <span className="font-mono text-sm font-semibold text-primary">
+                    {transaction ? `₳${transaction.amount}` : isLoading ? "₳…" : "₳—"}
+                  </span>
                 </div>
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Transaction Fee</span>
-                  <span className="font-mono text-sm font-semibold text-accent">₳{mockTransaction.fee}</span>
+                  <span className="font-mono text-sm font-semibold text-accent">
+                    {transaction ? `₳${transaction.fee}` : isLoading ? "₳…" : "₳—"}
+                  </span>
                 </div>
               </div>
               {animationStep >= 4 && (
                 <div className="rounded-lg border border-border bg-background p-3">
                   <div className="flex flex-col gap-2">
                     <span className="text-sm text-muted-foreground">Transaction Hash</span>
-                    <span className="truncate font-mono text-xs text-foreground">{mockTransaction.hash}</span>
+                    <span className="truncate font-mono text-xs text-foreground">
+                      {transaction ? transaction.hash : isLoading ? "Loading..." : "—"}
+                    </span>
                   </div>
                 </div>
               )}

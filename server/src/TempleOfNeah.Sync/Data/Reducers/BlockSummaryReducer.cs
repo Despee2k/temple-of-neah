@@ -9,10 +9,11 @@ using Chrysalis.Wallet.Models.Addresses;
 using Microsoft.EntityFrameworkCore;
 using TempleOfNeah.Sync.Data.Context;
 using TempleOfNeah.Sync.Data.Models;
+using Microsoft.Extensions.Options;
 
 namespace TempleOfNeah.Sync.Data.Reducers;
 
-public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory) : IReducer<BlockSummary>
+public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory, IConfiguration config) : IReducer<BlockSummary>
 {
     // Cardano mainnet: 432000 slots per epoch
     // Preview/testnet: typically 86400 slots per epoch
@@ -129,7 +130,7 @@ public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory
         }
 
         // Calculate height - get from previous block or calculate
-        ulong height = 0;
+        ulong height = config.GetValue<ulong>("CardanoNodeConnection:Height");;
         if (!string.IsNullOrEmpty(previousBlockHash))
         {
             var previousBlock = await db.BlockSummary
@@ -137,7 +138,7 @@ public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory
             
             if (previousBlock != null)
             {
-                height = previousBlock.Height + 1;
+                height = height < previousBlock.Height ? previousBlock.Height + 1 : height + 1;
             }
             else
             {
@@ -146,7 +147,7 @@ public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory
                     .OrderByDescending(b => b.Height)
                     .Select(b => b.Height)
                     .FirstOrDefaultAsync();
-                height = maxHeight + 1;
+                height = height < maxHeight ? maxHeight + 1 : height + 1;
             }
         }
         else
@@ -165,9 +166,10 @@ public class BlockSummaryReducer(IDbContextFactory<MyDbContext> dbContextFactory
         DateTimeOffset? timestamp = null;
         try
         {
-            // Mainnet genesis timestamp
-            var genesisTimestamp = new DateTimeOffset(2017, 9, 23, 21, 44, 51, TimeSpan.Zero);
-            timestamp = genesisTimestamp.AddSeconds((long)slot);
+            // Testnet version
+            var testnetGenesis = new DateTimeOffset(2022, 10, 24, 23, 59, 20, TimeSpan.Zero);
+            double slotLengthSeconds = 1.0; // usually 1 second on testnet
+            timestamp = testnetGenesis.AddSeconds(slot * slotLengthSeconds);
         }
         catch
         {
