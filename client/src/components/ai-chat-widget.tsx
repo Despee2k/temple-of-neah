@@ -9,14 +9,6 @@ interface ChatMessage {
   content: string;
 }
 
-interface ApiChatMessage {
-  role: ChatRole;
-  content: string;
-}
-
-interface ChatResponse {
-  reply: string;
-}
 
 // Helper to detect if the user explicitly asked for more detail
 function userRequestedMoreDetail(input: string): boolean {
@@ -90,6 +82,19 @@ export const AiChatWidget: React.FC = () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
+    const apiKey = CHAT_CONFIG.API_KEY;
+    if (!apiKey) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Error: Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your environment variables.",
+        },
+      ]);
+      return;
+    }
+
     const newUserMessage: ChatMessage = {
       role: "user",
       content: trimmed,
@@ -101,28 +106,42 @@ export const AiChatWidget: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const payload = {
-        messages: updatedMessages.map<ApiChatMessage>((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
-        wordLimit: activeWordLimit,
+      // Convert messages into Gemini content format
+      const contents = updatedMessages.map((m) => ({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      }));
+
+      const body = {
+        systemInstruction: {
+          role: "system",
+          parts: [{ text: CHAT_CONFIG.SYSTEM_PROMPT }],
+        },
+        contents,
+        generationConfig: {
+          maxOutputTokens: 512,
+          temperature: 0.4,
+        },
       };
 
-      const response = await fetch("/api/chat", {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${CHAT_CONFIG.MODEL_NAME}:generateContent?key=${apiKey}`;
+
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
-        throw new Error(`Chat request failed with status ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
       }
 
-      const data: ChatResponse = await response.json();
-      const rawReply = (data.reply ?? "").toString();
+      const data = await response.json();
+      const rawReply =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
       const truncatedReply = truncateToWordLimit(rawReply, activeWordLimit);
 
       const assistantMessage: ChatMessage = {
@@ -148,7 +167,6 @@ export const AiChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* Minimized bubble - matches your app's design system */}
       {!isOpen && (
         <button
           type="button"
@@ -160,7 +178,6 @@ export const AiChatWidget: React.FC = () => {
         </button>
       )}
 
-      {/* Expanded widget - redesigned to match your app */}
       <div
         className={`fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] transform transition-all duration-300 ${
           isOpen
@@ -168,8 +185,7 @@ export const AiChatWidget: React.FC = () => {
             : "opacity-0 translate-y-4 pointer-events-none"
         }`}
       >
-        <div className="flex flex-col rounded-lg border border-border bg-card shadow-2xl overflow-hidden">
-          {/* Header - matches your card headers */}
+        <div className="flex flex-col rounded-lg border border-border bg-card shadow-2xl overflow-hidden min-h-[32rem]">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
