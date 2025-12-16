@@ -19,6 +19,13 @@ function App() {
           <Route path="transactions" element={<TransactionsModule />} />
         </Route>
       </Routes>
+      {/* Footer */}
+      <footer className="border-t border-border bg-card">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-muted-foreground">Built with real Cardano data via <a href="https://docs.saib.dev/docs/argus/getting-started/overview">Argus</a> indexer.</p>
+          <p className="text-center text-sm text-muted-foreground">&copy; <a href="https://github.com/Despee2k/temple-of-neah">Temple of Neah</a></p>
+        </div>
+      </footer>
     </HashRouter>
   )
 }

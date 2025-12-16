@@ -2,9 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Info } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { getLatestBlockSummaries, type BlockSummary } from "@/api/blockSummary"
 
-interface BlockData {
+interface BlockViewModel {
   height: number
   hash: string
   previousHash: string
@@ -16,20 +17,72 @@ interface BlockData {
   epoch: number
 }
 
-const mockBlock: BlockData = {
-  height: 8234567,
-  hash: "a3b9f8c2d1e5a7b3c9d8e2f1a5b7c3d9e8f2a1b5c7d3e9f8a2b1c5d7e3f9a8b2",
-  previousHash: "b5c7d3e9f8a2b1c5d7e3f9a8b2c1d5e7f3a9b8c2d1e5a7b3c9d8e2f1a5b7c3",
-  timestamp: "2024-01-15 14:32:18 UTC",
-  transactions: 42,
-  totalADA: "125,430.25",
-  fees: "8.45",
-  slotNumber: 84523940,
-  epoch: 421,
-}
-
 export function BlockExplorer() {
   const [selectedField, setSelectedField] = useState<string | null>(null)
+  const [block, setBlock] = useState<BlockViewModel | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadBlock = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        const [latest] = await getLatestBlockSummaries(1)
+        if (!isMounted || !latest) return
+
+        const viewModel = mapBlockSummaryToViewModel(latest)
+        setBlock(viewModel)
+      } catch (e) {
+        if (!isMounted) return
+        console.error("Failed to load latest block summary", e)
+        setError("Unable to load live block data right now.")
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadBlock()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const mapBlockSummaryToViewModel = (summary: BlockSummary): BlockViewModel => {
+    const timestamp = new Date(summary.timestamp)
+    const timestampLabel = `${timestamp.toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    })} UTC`
+
+    return {
+      height: summary.height,
+      hash: summary.blockHash,
+      previousHash: summary.previousBlockHash,
+      timestamp: timestampLabel,
+      transactions: summary.txCount,
+      totalADA: summary.totalAdaMoved.toLocaleString(undefined, {
+        maximumFractionDigits: 6,
+      }),
+      fees: summary.totalFees.toLocaleString(undefined, {
+        maximumFractionDigits: 6,
+      }),
+      slotNumber: summary.slot,
+      epoch: summary.epoch,
+    }
+  }
 
   const explanations = {
     height: {
@@ -86,6 +139,14 @@ export function BlockExplorer() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <Card className="border-destructive/40 bg-destructive/5">
+          <CardContent className="py-3 text-sm text-destructive">
+            {error} Showing placeholders until the API is available.
+          </CardContent>
+        </Card>
+      )}
+
       {/* Main Block Visualization */}
       <Card className="border-primary/20 bg-card">
         <CardHeader>
@@ -124,7 +185,7 @@ export function BlockExplorer() {
                     </Tooltip>
                   </div>
                   <span className="font-mono text-lg font-semibold text-primary">
-                    {mockBlock.height.toLocaleString()}
+                    {block ? block.height.toLocaleString() : isLoading ? "Loading..." : "—"}
                   </span>
                 </div>
               </div>
@@ -150,7 +211,9 @@ export function BlockExplorer() {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <span className="truncate font-mono text-xs text-primary">{mockBlock.hash}</span>
+                  <span className="truncate font-mono text-xs text-primary">
+                    {block ? block.hash : isLoading ? "Loading..." : "—"}
+                  </span>
                 </div>
               </div>
 
@@ -175,7 +238,9 @@ export function BlockExplorer() {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <span className="truncate font-mono text-xs text-accent">{mockBlock.previousHash}</span>
+                  <span className="truncate font-mono text-xs text-accent">
+                    {block ? block.previousHash : isLoading ? "Loading..." : "—"}
+                  </span>
                 </div>
               </div>
 
@@ -200,7 +265,9 @@ export function BlockExplorer() {
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                  <span className="font-mono text-sm text-foreground">{mockBlock.timestamp}</span>
+                  <span className="font-mono text-sm text-foreground">
+                    {block ? block.timestamp : isLoading ? "Loading..." : "—"}
+                  </span>
                 </div>
               </div>
 
@@ -227,7 +294,9 @@ export function BlockExplorer() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <span className="font-mono text-lg font-semibold text-primary">{mockBlock.transactions}</span>
+                  <span className="font-mono text-lg font-semibold text-primary">
+                    {block ? block.transactions : isLoading ? "…" : "—"}
+                  </span>
                   </div>
                 </div>
 
@@ -252,7 +321,9 @@ export function BlockExplorer() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <span className="font-mono text-lg font-semibold text-primary">₳{mockBlock.totalADA}</span>
+                    <span className="font-mono text-lg font-semibold text-primary">
+                      {block ? `₳${block.totalADA}` : isLoading ? "₳…" : "₳—`"}
+                    </span>
                   </div>
                 </div>
 
@@ -277,7 +348,9 @@ export function BlockExplorer() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <span className="font-mono text-lg font-semibold text-accent">₳{mockBlock.fees}</span>
+                    <span className="font-mono text-lg font-semibold text-accent">
+                      {block ? `₳${block.fees}` : isLoading ? "₳…" : "₳—"}
+                    </span>
                   </div>
                 </div>
 
@@ -302,7 +375,9 @@ export function BlockExplorer() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <span className="font-mono text-sm text-foreground">{mockBlock.slotNumber.toLocaleString()}</span>
+                    <span className="font-mono text-sm text-foreground">
+                      {block ? block.slotNumber.toLocaleString() : isLoading ? "Loading..." : "—"}
+                    </span>
                   </div>
                 </div>
 
@@ -327,7 +402,9 @@ export function BlockExplorer() {
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                    <span className="font-mono text-sm text-foreground">{mockBlock.epoch}</span>
+                    <span className="font-mono text-sm text-foreground">
+                      {block ? block.epoch : isLoading ? "Loading..." : "—"}
+                    </span>
                   </div>
                 </div>
               </div>

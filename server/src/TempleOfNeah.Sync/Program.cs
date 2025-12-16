@@ -14,8 +14,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCardanoIndexer<MyDbContext>(builder.Configuration);
 builder.Services.AddReducers<MyDbContext, IReducerModel>(builder.Configuration);
 
-// Launch!
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .AllowAnyOrigin()   // allow requests from any domain
+            .AllowAnyHeader()   // allow any header
+            .AllowAnyMethod()); // allow GET, POST, PUT, DELETE, etc.
+});
+
 var app = builder.Build();
+
+// Use CORS
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

@@ -4,8 +4,113 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Blocks, Clock, Activity } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { getLatestBlockSummaries, getBlockSummaryByHash, type BlockSummary } from "@/api/blockSummary"
+
+const POLL_INTERVAL_MS = 10000
+
+function formatTimeAgo(timestamp: string): string {
+  const then = new Date(timestamp).getTime()
+  const now = Date.now()
+  const diffSeconds = Math.max(0, Math.round((now - then) / 1000))
+
+  if (diffSeconds < 5) return "Just now"
+  if (diffSeconds < 60) return `${diffSeconds} sec ago`
+
+  const diffMinutes = Math.round(diffSeconds / 60)
+  if (diffMinutes < 60) return `${diffMinutes} min ago`
+
+  const diffHours = Math.round(diffMinutes / 60)
+  return `${diffHours} hr ago`
+}
 
 export default function Explorer() {
+  const [latestBlocks, setLatestBlocks] = useState<BlockSummary[]>([])
+  const [isLoadingBlocks, setIsLoadingBlocks] = useState(false)
+  const [blocksError, setBlocksError] = useState<string | null>(null)
+  const [recentBlocksCount, setRecentBlocksCount] = useState(8)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
+  const [searchedBlock, setSearchedBlock] = useState<BlockSummary | null>(null)
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadBlocks = async () => {
+      try {
+        setIsLoadingBlocks(true)
+        setBlocksError(null)
+
+        const blocks = await getLatestBlockSummaries(recentBlocksCount)
+        if (!isMounted) return
+
+        setLatestBlocks(blocks)
+      } catch (e) {
+        if (!isMounted) return
+        console.error("Failed to load latest blocks", e)
+        setBlocksError("Unable to load latest blocks right now.")
+      } finally {
+        if (isMounted) {
+          setIsLoadingBlocks(false)
+        }
+      }
+    }
+
+    void loadBlocks()
+
+    const intervalId = window.setInterval(() => {
+      void loadBlocks()
+    }, POLL_INTERVAL_MS)
+
+    return () => {
+      isMounted = false
+      window.clearInterval(intervalId)
+    }
+  }, [recentBlocksCount])
+
+  const latestBlock = latestBlocks[0]
+
+  const { averageBlockTimeSeconds, tps } = useMemo(() => {
+    if (latestBlocks.length < 2) {
+      return { averageBlockTimeSeconds: null as number | null, tps: null as number | null }
+    }
+
+    const sorted = [...latestBlocks].sort(
+      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    )
+
+    const firstTime = new Date(sorted[0].timestamp).getTime()
+    const lastTime = new Date(sorted[sorted.length - 1].timestamp).getTime()
+
+    const totalSeconds = Math.max(1, (lastTime - firstTime) / 1000)
+    const averageBlockTimeSeconds = totalSeconds / (sorted.length - 1)
+
+    const totalTx = sorted.reduce((acc, block) => acc + block.txCount, 0)
+    const tps = totalTx / totalSeconds
+
+    return { averageBlockTimeSeconds, tps }
+  }, [latestBlocks])
+
+  const handleSearch = async () => {
+    const query = searchQuery.trim()
+    if (!query) return
+
+    try {
+      setIsSearching(true)
+      setSearchError(null)
+      setSearchedBlock(null)
+
+      const block = await getBlockSummaryByHash(query)
+      setSearchedBlock(block)
+    } catch (e) {
+      console.error("Failed to search block by hash", e)
+      setSearchError("No block found with that hash or the server is unavailable.")
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -26,15 +131,28 @@ export default function Explorer() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search by block height, hash, or transaction ID..."
+                  placeholder="Search by block hash..."
                   className="pl-10 bg-background"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault()
+                      void handleSearch()
+                    }
+                  }}
                 />
               </div>
-              <Button className="gap-2">
+              <Button className="gap-2" onClick={() => void handleSearch()} disabled={isSearching}>
                 <Search className="h-4 w-4" />
-                Search
+                {isSearching ? "Searching..." : "Search"}
               </Button>
             </div>
+            {searchError && (
+              <p className="mt-3 text-sm text-destructive">
+                {searchError}
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -48,8 +166,20 @@ export default function Explorer() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">8,234,567</div>
-              <p className="text-xs text-muted-foreground">Just now</p>
+              <div className="text-2xl font-bold text-foreground">
+                {latestBlock
+                  ? latestBlock.height.toLocaleString()
+                  : isLoadingBlocks
+                    ? "Loading…"
+                    : "—"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {latestBlock
+                  ? formatTimeAgo(latestBlock.timestamp)
+                  : isLoadingBlocks
+                    ? "Fetching latest block…"
+                    : blocksError ?? "No data"}
+              </p>
             </CardContent>
           </Card>
 
@@ -61,8 +191,16 @@ export default function Explorer() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">20s</div>
-              <p className="text-xs text-muted-foreground">Last 100 blocks</p>
+              <div className="text-2xl font-bold text-foreground">
+                {averageBlockTimeSeconds != null
+                  ? `${averageBlockTimeSeconds.toFixed(1)}s`
+                  : isLoadingBlocks
+                    ? "Loading…"
+                    : "—"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {latestBlocks.length > 0 ? `Last ${latestBlocks.length} blocks` : "Waiting for data"}
+              </p>
             </CardContent>
           </Card>
 
@@ -74,8 +212,16 @@ export default function Explorer() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">42 TPS</div>
-              <p className="text-xs text-muted-foreground">Transactions per second</p>
+              <div className="text-2xl font-bold text-foreground">
+                {tps != null
+                  ? `${tps.toFixed(1)} TPS`
+                  : isLoadingBlocks
+                    ? "Loading…"
+                    : "—"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {latestBlocks.length > 0 ? "Approx. based on recent blocks" : "Transactions per second"}
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -91,15 +237,17 @@ export default function Explorer() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { height: 8234567, hash: "a3b9f8c2d1e5", txs: 42, time: "2 sec ago" },
-                { height: 8234566, hash: "b5c7d3e9f8a2", txs: 38, time: "22 sec ago" },
-                { height: 8234565, hash: "c9d8e2f1a5b7", txs: 35, time: "42 sec ago" },
-                { height: 8234564, hash: "d3e9f8a2b1c5", txs: 51, time: "1 min ago" },
-                { height: 8234563, hash: "e8f2a1b5c7d3", txs: 29, time: "1 min ago" },
-              ].map((block) => (
+              {isLoadingBlocks && latestBlocks.length === 0 && (
+                <p className="text-sm text-muted-foreground">Loading recent blocks…</p>
+              )}
+
+              {!isLoadingBlocks && latestBlocks.length === 0 && blocksError && (
+                <p className="text-sm text-destructive">{blocksError}</p>
+              )}
+
+              {latestBlocks.map((block) => (
                 <div
-                  key={block.height}
+                  key={block.blockHash}
                   className="flex items-center justify-between rounded-lg border border-border bg-background p-4 transition-colors hover:border-primary/50 hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-4">
@@ -107,24 +255,131 @@ export default function Explorer() {
                       <Blocks className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Block #{block.height.toLocaleString()}</p>
-                      <p className="font-mono text-xs text-muted-foreground">{block.hash}</p>
+                      <p className="font-semibold text-foreground">
+                        Block #{block.height.toLocaleString()}
+                      </p>
+                      <p className="font-mono text-xs text-muted-foreground">{block.blockHash}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <p className="text-sm font-medium text-foreground">{block.txs} transactions</p>
-                      <p className="text-xs text-muted-foreground">{block.time}</p>
+                      <p className="text-sm font-medium text-foreground">{block.txCount} transactions</p>
+                      <p className="text-xs text-muted-foreground">{formatTimeAgo(block.timestamp)}</p>
                     </div>
-                    <Button variant="outline" size="sm" className="bg-transparent">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-transparent"
+                      onClick={() => setSearchedBlock(block)}
+                    >
                       View
                     </Button>
                   </div>
                 </div>
               ))}
+
+              {!isLoadingBlocks && latestBlocks.length > 0 && (
+                <div className="flex justify-center pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-transparent"
+                    onClick={() => setRecentBlocksCount((prev) => prev + 5)}
+                  >
+                    View more blocks
+                  </Button>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
+
+        {/* Search Result Modal */}
+        {searchedBlock && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+            <Card className="max-w-xl w-full border-primary/40 bg-card shadow-lg">
+              <CardHeader>
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-foreground">Block Details</CardTitle>
+                    <CardDescription>Detailed summary of a real Cardano block</CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-transparent"
+                    onClick={() => setSearchedBlock(null)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">Block Hash</p>
+                  <p className="font-mono text-xs break-all text-foreground">{searchedBlock.blockHash}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Height</p>
+                    <p className="font-mono text-foreground">{searchedBlock.height.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Slot</p>
+                    <p className="font-mono text-foreground">{searchedBlock.slot.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Epoch</p>
+                    <p className="font-mono text-foreground">{searchedBlock.epoch}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Timestamp</p>
+                    <p className="font-mono text-foreground">
+                      {new Date(searchedBlock.timestamp).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Transactions</p>
+                    <p className="font-mono text-foreground">{searchedBlock.txCount.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Unique Addresses</p>
+                    <p className="font-mono text-foreground">{searchedBlock.uniqueAddressCount.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Total ADA Moved</p>
+                    <p className="font-mono text-primary">
+                      ₳
+                      {searchedBlock.totalAdaMoved.toLocaleString(undefined, {
+                        maximumFractionDigits: 6,
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">Total Fees</p>
+                    <p className="font-mono text-accent">
+                      ₳
+                      {searchedBlock.totalFees.toLocaleString(undefined, {
+                        maximumFractionDigits: 6,
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <p>
+                    This summary is simplified from real on-chain data indexed by your backend. It shows how active this
+                    block was: how many transactions it contains, how much ADA moved, and how much was paid in fees.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   )
