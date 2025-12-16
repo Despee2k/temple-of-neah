@@ -36,10 +36,10 @@ export default function Modules() {
           </Link>
 
           <Link to="/modules/transactions">
-            <Card className="h-full cursor-pointer border-border bg-card transition-all hover:border-accent hover:shadow-lg">
+            <Card className="h-full cursor-pointer border-border bg-card transition-all hover:border-primary hover:shadow-lg">
               <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                  <ArrowRightLeft className="h-6 w-6 text-accent" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                  <ArrowRightLeft className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle className="text-foreground">How Transactions Work</CardTitle>
                 <CardDescription>Visualize ADA movement and transaction flow</CardDescription>
