@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CHAT_CONFIG } from "../config/chatConfig";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type ChatRole = "user" | "assistant";
 
@@ -224,7 +226,97 @@ export const AiChatWidget: React.FC = () => {
                       : "border border-border bg-card text-foreground"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+                  {message.role === "assistant" ? (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        h1: ({ children }) => (
+                          <h1 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="text-sm font-bold mb-2 mt-3 first:mt-0">{children}</h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="text-sm font-semibold mb-1 mt-2 first:mt-0">{children}</h3>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="list-disc list-inside mb-2 space-y-1 ml-2">{children}</ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="list-decimal list-inside mb-2 space-y-1 ml-2">{children}</ol>
+                        ),
+                        li: ({ children }) => <li className="ml-2">{children}</li>,
+                        code: ({ inline, children }: { inline?: boolean; children: React.ReactNode }) => {
+                          if (inline) {
+                            return (
+                              <code
+                                className="px-1.5 py-0.5 rounded bg-muted text-primary font-mono text-xs"
+                              >
+                                {children}
+                              </code>
+                            );
+                          }
+                          return (
+                            <code
+                              className="block p-2 rounded bg-muted text-foreground font-mono text-xs overflow-x-auto mb-2"
+                            >
+                              {children}
+                            </code>
+                          );
+                        },
+                        pre: ({ children }) => (
+                          <pre className="mb-2 overflow-x-auto">{children}</pre>
+                        ),
+                        a: ({ href, children }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:text-primary/80"
+                          >
+                            {children}
+                          </a>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-semibold">{children}</strong>
+                        ),
+                        em: ({ children }) => <em className="italic">{children}</em>,
+                        blockquote: ({ children }) => (
+                          <blockquote className="border-l-2 border-primary/50 pl-3 my-2 italic text-muted-foreground">
+                            {children}
+                          </blockquote>
+                        ),
+                        hr: () => <hr className="my-3 border-border" />,
+                        table: ({ children }) => (
+                          <div className="overflow-x-auto my-2">
+                            <table className="min-w-full border-collapse border border-border">
+                              {children}
+                            </table>
+                          </div>
+                        ),
+                        thead: ({ children }) => (
+                          <thead className="bg-muted">{children}</thead>
+                        ),
+                        tbody: ({ children }) => <tbody>{children}</tbody>,
+                        tr: ({ children }) => (
+                          <tr className="border-b border-border">{children}</tr>
+                        ),
+                        th: ({ children }) => (
+                          <th className="border border-border px-2 py-1 text-left font-semibold">
+                            {children}
+                          </th>
+                        ),
+                        td: ({ children }) => (
+                          <td className="border border-border px-2 py-1">{children}</td>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  )}
                 </div>
               </div>
             ))}
