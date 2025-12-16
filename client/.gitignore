@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Env and caches
+.env*
+.eslintcache
+*.tsbuildinfo
+.turbo/
+.parcel-cache/
+
+# Coverage output
+coverage/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

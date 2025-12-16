@@ -5,6 +5,11 @@
 
 # dotenv files
 .env
+.env.*
+
+# Local app settings (keep secrets out of git)
+appsettings.*.Local.json
+appsettings.Development.json
 
 # User-specific files
 *.rsuser
@@ -152,6 +157,7 @@ _TeamCity*
 coverage*.json
 coverage*.xml
 coverage*.info
+coverage/
 
 # Visual Studio code coverage results
 *.coverage

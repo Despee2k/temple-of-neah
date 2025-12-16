@@ -1,0 +1,30 @@
+# Editor and OS artifacts
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Logs and lockfiles
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.swp
+
+# Environment files
+.env*
+
+# Node / tooling build output
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+.eslintcache
+.turbo/
+.parcel-cache/
+coverage/
+
+# Misc
+*.local
