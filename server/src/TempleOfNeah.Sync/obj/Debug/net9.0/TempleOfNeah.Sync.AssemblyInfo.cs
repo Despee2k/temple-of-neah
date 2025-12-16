@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TempleOfNeah.Sync")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c1d13b21e73775c3b97d0c02644962a9beb3669")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4e445633f2d8a9005325314ffe3e836e78b2bef")]
 [assembly: System.Reflection.AssemblyProductAttribute("TempleOfNeah.Sync")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TempleOfNeah.Sync")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

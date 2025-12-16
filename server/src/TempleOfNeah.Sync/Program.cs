@@ -1,6 +1,15 @@
 using Argus.Sync.Data.Models;
 using Argus.Sync.Extensions;
+using DotNetEnv;
 using TempleOfNeah.Sync.Data.Context;
+
+// Load .env file if it exists (for local development)
+// This allows using .env files for configuration instead of environment variables
+var envPath = Path.Combine(AppContext.BaseDirectory, ".env");
+if (File.Exists(envPath))
+{
+    Env.Load(envPath);
+}
 
 // Build the application
 var builder = WebApplication.CreateBuilder(args);
