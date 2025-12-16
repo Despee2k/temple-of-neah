@@ -119,8 +119,7 @@ export default function Explorer() {
         <div className="mb-8">
           <h1 className="text-balance text-3xl font-bold text-foreground sm:text-4xl">Block Explorer</h1>
           <p className="mt-4 text-pretty text-lg leading-relaxed text-muted-foreground">
-            Explore the Cardano blockchain in real-time. Watch new blocks being created and search for specific blocks
-            or transactions.
+            Explore the Cardano blockchain in real-time. Watch new blocks being created and search for specific.
           </p>
         </div>
 

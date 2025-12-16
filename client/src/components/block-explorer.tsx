@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Info } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { getLatestBlockSummaries, type BlockSummary } from "@/api/blockSummary"
 
 interface BlockViewModel {
@@ -84,11 +84,11 @@ export function BlockExplorer() {
     }
   }
 
-  const explanations = {
+  const explanations = useMemo(() => ({
     height: {
       title: "Block Height",
       description: "The sequential number of this block in the blockchain. Each new block increases this number by 1.",
-      example: "This is block #8,234,567 in the Cardano blockchain.",
+      example: `This is block #${block?.height || 0} in the Cardano blockchain.`,
     },
     hash: {
       title: "Block Hash",
@@ -110,32 +110,32 @@ export function BlockExplorer() {
     transactions: {
       title: "Transactions",
       description: "The number of transactions (transfers of ADA or other assets) included in this block.",
-      example: "This block contains 42 transactions from different users.",
+      example: `This block contains ${block?.transactions || 'N/A'} transactions from different users.`,
     },
     totalADA: {
       title: "Total ADA",
       description: "The sum of all ADA tokens transferred in all transactions within this block.",
-      example: "125,430.25 ADA moved between addresses in this block.",
+      example: `${block?.totalADA || 'N/A'} ADA moved between addresses in this block.`,
     },
     fees: {
       title: "Transaction Fees",
       description:
         "The total fees paid by users to have their transactions included in this block. These fees go to stake pool operators.",
-      example: "Users paid 8.45 ADA in fees for processing these transactions.",
+      example: `Users paid ${block?.fees || 'N/A'} ADA in fees for processing these transactions.`,
     },
     slotNumber: {
       title: "Slot Number",
       description:
         "A time unit in Cardano. Each slot is 1 second, and slots are grouped into epochs. Blocks can be created in specific slots.",
-      example: "This block was created in slot 84,523,940.",
+      example: `This block was created in slot ${block?.slotNumber || 'N/A'}.`,
     },
     epoch: {
       title: "Epoch",
       description:
         "A period of time in Cardano, lasting about 5 days. Epochs are used for staking rewards and protocol updates.",
-      example: "This block is part of epoch 421.",
+      example: `This block is part of epoch ${block?.epoch || 'N/A'}.`,
     },
-  }
+  }), [block])
 
   return (
     <div className="space-y-6">

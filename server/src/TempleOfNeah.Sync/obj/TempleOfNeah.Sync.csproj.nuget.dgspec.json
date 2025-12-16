@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Reynat\\Documents\\GitHub\\temple-of-neah\\server\\src\\TempleOfNeah.Sync\\TempleOfNeah.Sync.csproj": {}
+    "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/TempleOfNeah.Sync.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Reynat\\Documents\\GitHub\\temple-of-neah\\server\\src\\TempleOfNeah.Sync\\TempleOfNeah.Sync.csproj": {
+    "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/TempleOfNeah.Sync.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Reynat\\Documents\\GitHub\\temple-of-neah\\server\\src\\TempleOfNeah.Sync\\TempleOfNeah.Sync.csproj",
+        "projectUniqueName": "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/TempleOfNeah.Sync.csproj",
         "projectName": "TempleOfNeah.Sync",
-        "projectPath": "C:\\Users\\Reynat\\Documents\\GitHub\\temple-of-neah\\server\\src\\TempleOfNeah.Sync\\TempleOfNeah.Sync.csproj",
-        "packagesPath": "C:\\Users\\Reynat\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Reynat\\Documents\\GitHub\\temple-of-neah\\server\\src\\TempleOfNeah.Sync\\obj\\",
+        "projectPath": "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/TempleOfNeah.Sync.csproj",
+        "packagesPath": "/home/zeus/.nuget/packages/",
+        "outputPath": "/mnt/c/Users/Zeus/GITHUB/AA-Personal-Projects/temple-of-neah/server/src/TempleOfNeah.Sync/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Reynat\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/zeus/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -38,7 +38,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net9.0": {
@@ -90,7 +90,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
