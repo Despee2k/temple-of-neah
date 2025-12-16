@@ -1,4 +1,4 @@
-import { useTheme } from "./theme-provider";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { Blocks, Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
